@@ -144,6 +144,10 @@ class Cart:
         # Clicking on cart button
         buy = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//app-buy-button[@class='toOrder ng-star-inserted']")))
         buy.click()
-        self.driver.switch_to.alert.accept()
-        #cart = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//button[@area-label='Открыть корзину']")))
-        #cart.click()
+        cart = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//button[@aria-label='Открыть корзину']")))
+        cart.click()
+        # Checking if the heading is 'Кошик'
+        head = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//h3[@class='modal__heading']"))).text
+        if head == 'Кошик':
+            return 'Passed'
+        return 'Failed'
