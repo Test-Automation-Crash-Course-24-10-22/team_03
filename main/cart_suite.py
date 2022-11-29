@@ -29,8 +29,7 @@ class Cart:
         amount = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//span[@class='counter counter--green ng-star-inserted']"))).text)
         if amount == 1:
             return 'Passed'
-        else:
-            return 'Failed'
+        return 'Failed'
 
     # Verifying the user's ability to add another available product item to the Cart & closure of pop-up via the cross
     def add_item(self):
@@ -50,7 +49,7 @@ class Cart:
         # Clicking on the text 'В кошику'
         cart = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//span[@class='buy-button__label ng-star-inserted']")))
         cart.click()
-        price_per_one = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='cart-receipt__sum-price']/span[1]"))).text)
+        price_for_one = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='cart-receipt__sum-price']/span[1]"))).text)
         # Clicking on plus
         plus = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@data-testid='cart-counter-increment-button']")))
         plus.click()
@@ -58,8 +57,8 @@ class Cart:
         # self.wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
         time.sleep(3)  # The previous row is no help at all, so...
         self.wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
-        price_per_two = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='cart-receipt__sum-price']/span[1]"))).text)
-        if amount == 2 and price_per_two == price_per_one * 2:
+        price_for_two = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='cart-receipt__sum-price']/span[1]"))).text)
+        if amount == 2 and price_for_two == price_for_one * 2:
             # Closing cart pop-up via cross
             cross = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@class='modal__close']")))
             cross.click()
@@ -69,3 +68,49 @@ class Cart:
                 return 'Passed'
         return 'Failed'
 
+    # Removing Product from the Cart
+    def rem_product(self):
+        self.driver.get(self.product_page)
+        self.wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        # Clicking on cart button
+        buy = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "(//*[name()='use' and @*='#icon-basket']/../..)[1]")))
+        buy.click()
+        buy = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "(//*[name()='use' and @*='#icon-basket']/../..)[2]")))
+        buy.click()
+        # Clicking on cart icon
+        cart = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@class='header__button ng-star-inserted header__button--active']")))
+        cart.click()
+        # Clicking on three dots button
+        dots = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@id='cartProductActions0']")))
+        dots.click()
+        # Remove product
+        rem = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@class='button button--medium button--with-icon button--link context-menu-actions__button']")))
+        rem.click()
+        # self.wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        time.sleep(3)  # The previous row is no help at all, so...
+        sum = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='cart-receipt__sum-price']/span[1]"))).text)
+        price = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//p[@data-testid='cost']"))).text.split(" ", 2)
+        price = int(''.join(price[:len(price)-1]))
+        if sum == price:
+            # Remove another product
+            dots = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@id='cartProductActions0']")))
+            dots.click()
+            rem = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@class='button button--medium button--with-icon button--link context-menu-actions__button']")))
+            rem.click()
+            header = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//h4[@class='cart-dummy__heading']"))).text
+            mes = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//p[@class='cart-dummy__caption']"))).text
+            if header == 'Кошик порожній' and mes == 'Але це ніколи не пізно виправити :)':
+                return 'Passed'
+        return 'Failed'
+
+    # Verifying the user's ability to open the Cart via a Pop-up message
+    def pop_up(self):
+        self.driver.get(self.product_page)
+        # self.wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        time.sleep(3)  # The previous row is no help at all, so...
+        # Clicking on cart button
+        buy = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//app-buy-button[@class='toOrder ng-star-inserted']")))
+        buy.click()
+        self.driver.switch_to.alert.accept()
+        #cart = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//button[@area-label='Открыть корзину']")))
+        #cart.click()
