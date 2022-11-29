@@ -103,6 +103,39 @@ class Cart:
                 return 'Passed'
         return 'Failed'
 
+    '''Verifying the user's ability to open the Cart via the text 'Вже в кошику' in the product overview,
+    remove one product item from the cart, & inability to remove all of them by using the '-' button'''
+    def rem_item(self):
+        self.driver.get(self.product_page)
+        self.wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        # Adding two items of any product to the cart
+        buy = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "(//*[name()='use' and @*='#icon-basket']/../..)")))
+        buy.click()
+        cart = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@class='header__button ng-star-inserted header__button--active']")))
+        cart.click()
+        plus = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@data-testid='cart-counter-increment-button']")))
+        plus.click()
+        # Clicking on minus
+        minus = self.wait.until(expected_conditions.element_to_be_clickable((By.XPATH, "//button[@data-testid='cart-counter-decrement-button']")))
+        minus.click()
+        # self.wait.until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        time.sleep(3)  # The previous row is no help at all, so...
+        minus_symb = self.driver.find_element(By.XPATH, "//button[@data-testid='cart-counter-decrement-button']").value_of_css_property('color')
+        amount = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//input[@data-testid='cart-counter-input']"))).get_attribute('value'))
+        price = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//p[@data-testid='cost']"))).text.split(" ", 2)
+        price = int(''.join(price[:len(price) - 1]))
+        sum = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='cart-receipt__sum-price']/span[1]"))).text)
+        if amount == 1 and price == sum and minus_symb == 'rgba(166, 165, 165, 1)':
+            minus.click()
+            minus_symb_new = self.driver.find_element(By.XPATH, "//button[@data-testid='cart-counter-decrement-button']").value_of_css_property('color')
+            amount_new = int(self.wait.until(expected_conditions.presence_of_element_located( (By.XPATH, "//input[@data-testid='cart-counter-input']"))).get_attribute('value'))
+            price_new = self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//p[@data-testid='cost']"))).text.split(" ", 2)
+            price_new = int(''.join(price_new[:len(price_new) - 1]))
+            sum_new = int(self.wait.until(expected_conditions.presence_of_element_located((By.XPATH, "//div[@class='cart-receipt__sum-price']/span[1]"))).text)
+            if minus_symb_new == minus_symb and amount_new == amount and price_new == price and sum_new == sum:
+                return 'Passed'
+        return 'Failed'
+
     # Verifying the user's ability to open the Cart via a Pop-up message
     def pop_up(self):
         self.driver.get(self.product_page)
