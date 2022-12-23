@@ -2,7 +2,6 @@ from drive import Drive
 from pages.prod_list_page import ProductListPage
 from pages.cart_page import CartPage
 from selenium.webdriver.support import expected_conditions
-import time
 
 
 # Removing Product from the Cart
@@ -11,7 +10,7 @@ class RemItem(Drive):
         remove one product item from the cart, & inability to remove all of them by using the '-' button"""
     def test_rem_item(self):
         self.driver.get(ProductListPage.page)
-        time.sleep(3)
+        self.driver.implicitly_wait(3)
         # Adding two items of any product to the cart
         buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.first_prod_cart_button))
         buy.click()
@@ -22,7 +21,7 @@ class RemItem(Drive):
         # Clicking on minus
         minus = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.minus_button))
         minus.click()
-        time.sleep(3)
+        self.driver.implicitly_wait(3)
         minus_symb_color = self.driver.find_element(CartPage.minus_button_symbol[0], CartPage.minus_button_symbol[1]).\
             value_of_css_property('color')
         # Checking if minus is inactive

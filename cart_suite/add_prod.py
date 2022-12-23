@@ -2,14 +2,13 @@ from drive import Drive
 from pages.prod_list_page import ProductListPage
 from pages.prod_page import ProductPage
 from selenium.webdriver.support import expected_conditions
-import time
 
 
 # Verifying the user's ability to add one available product item to the Cart & closure of Cart pop-up via the button
 class AddProduct(Drive):
     def test_add_product(self):
         self.driver.get(ProductListPage.page)
-        time.sleep(3)
+        self.driver.implicitly_wait(3)
         # Clicking on product's image to open product's page
         av_prod_a = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.product_image))
         av_prod_a.click()
