@@ -14,5 +14,5 @@
   <li>Clone the repository to your local machine</li>
   <li>Create venv with the command <sub>python -m venv venv</sub> and activate it</li>
   <li>Install all the necessary packages with the command <sub>pip install -r requirements.txt</sub></li>
-  <li>Run all tests with <sub>python -m unittest</sub> or particular with <sub>python -m unittest <test_suite>.<test></sub></li>
+  <li>Run all tests with <sub>python -m unittest</sub> or particular with <sub>python -m unittest [test_suite].[test]</sub></li>
 </ol>
