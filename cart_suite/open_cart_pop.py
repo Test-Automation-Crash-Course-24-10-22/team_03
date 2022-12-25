@@ -1,20 +1,27 @@
 from drive import Drive
-from pages.prod_list_page import ProductListPage
+from pages.prod_list_page import ProdListPage
 from pages.cart_page import CartPage
-from selenium.webdriver.support import expected_conditions
+import allure
 
 
-# Verifying the user's ability to open the Cart via a Pop-up message
+@allure.issue('https://github.com/Test-Automation-Crash-Course-24-10-22/team_03/issues/5',
+              "Opening the Cart via Pop-up message")
+@allure.severity(allure.severity_level.MINOR)
+@allure.description("""Verifying the user's ability to open the Cart via a Pop-up message""")
 class OpenCartPop(Drive):
+    @allure.step("Checking if header is correct")
+    def check_header(self, header):
+        self.assertEqual(header, 'Кошик')
+
     def test_pop_up(self):
-        self.driver.get(ProductListPage.page)
+        prod_list_page = ProdListPage(self.driver)
+        cart_page = CartPage(self.driver)
+        prod_list_page.open()
         self.driver.implicitly_wait(3)
         # Clicking on cart button
-        buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.first_prod_cart_button))
-        buy.click()
+        prod_list_page.cart_button_click()
         # Clicking on pop-up message
-        cart = self.wait.until(expected_conditions.presence_of_element_located(ProductListPage.pop_up_message))
-        cart.click()
-        header = self.wait.until(expected_conditions.presence_of_element_located(CartPage.page_header)).text
-        # Checking if page heading is 'Кошик'
-        self.assertEqual(header, 'Кошик')
+        prod_list_page.pop_up_click()
+        # Checking if header is correct
+        header = cart_page.get_cart_header()
+        self.check_header(header)

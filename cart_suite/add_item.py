@@ -1,43 +1,56 @@
 from drive import Drive
-from pages.prod_list_page import ProductListPage
-from pages.prod_page import ProductPage
+from pages.prod_list_page import ProdListPage
+from pages.prod_page import ProdPage
 from pages.cart_page import CartPage
-from selenium.webdriver.support import expected_conditions
+import allure
+import time
 
 
-# Verifying the user's ability to add another available product item to the Cart & closure of pop-up via the cross
+@allure.issue('https://github.com/Test-Automation-Crash-Course-24-10-22/team_03/issues/2',
+              "Adding Second Product Item to the Cart")
+@allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""Verifying the user's ability to add another available product item to the Cart & closure of 
+pop-up via the cross""")
 class AddItem(Drive):
-    def test_add_item(self):
-        self.driver.get(ProductListPage.page)
-        self.driver.implicitly_wait(3)
-        # Clicking on product's image to open product's page
-        av_prod_a = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.product_image))
-        av_prod_a.click()
-        # Clicking 'Купити' button
-        buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductPage.buy_button))
-        buy.click()
-        self.driver.get(ProductListPage.page)
-        self.waitDocLoad()
-        # Opening the product page again
-        av_prod_a = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.product_image))
-        av_prod_a.click()
-        # Clicking on the text 'В кошику'
-        cart = self.wait.until(expected_conditions.element_to_be_clickable(ProductPage.in_cart_text))
-        cart.click()
-        price_for_one = int(self.wait.until(expected_conditions.presence_of_element_located(CartPage.order_price)).text)
-        # Clicking on plus
-        plus = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.plus_button))
-        plus.click()
-        quantity = int(self.wait.until(expected_conditions.presence_of_element_located(CartPage.first_prod_quantity)).get_attribute('value'))
-        # Checking if quantity equals 2
+    @allure.step("Checking if the first product quantity equals 2")
+    def check_first_prod_quantity(self, quantity):
         self.assertEqual(quantity, 2)
-        self.driver.implicitly_wait(3)
-        price_for_two = int(self.wait.until(expected_conditions.presence_of_element_located(CartPage.order_price)).text)
-        # Checking the order price correct
+
+    @allure.step("Checking if the price for two equals 2 price for one multiplied by two")
+    def check_price(self, price_for_two, price_for_one):
         self.assertEqual(price_for_two, price_for_one * 2)
-        # Closing cart pop-up via cross
-        cross = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.cross))
-        cross.click()
-        quantity = int(self.wait.until(expected_conditions.presence_of_element_located(ProductPage.counter_icon)).text)
-        # Checking the counter icon
+
+    @allure.step("Checking if the counter icon equals 2")
+    def check_quantity(self, quantity):
         self.assertEqual(quantity, 2)
+
+    def test_add_item(self):
+        prod_list_page = ProdListPage(self.driver)
+        prod_page = ProdPage(self.driver)
+        cart_page = CartPage(self.driver)
+        prod_list_page.open()
+        time.sleep(3)
+        # Clicking on product
+        prod_list_page.prod_click()
+        # Clicking on buy button
+        prod_page.buy_button_click()
+        # Opening the product page again
+        prod_page.open()
+        time.sleep(3)
+        # Opening the cart
+        prod_page.cart_text_click()
+        price_for_one = cart_page.get_order_price()
+        # Clicking on plus
+        cart_page.plus_click()
+        time.sleep(3)
+        # Checking if the first product quantity equals 2
+        quantity = cart_page.get_first_product_quantity()
+        self.check_first_prod_quantity(quantity)
+        # Checking if the price per two equals 2 price per one multiplied by two
+        price_for_two = cart_page.get_order_price()
+        self.check_price(price_for_two, price_for_one)
+        # Closing cart pop-up via cross
+        cart_page.cross_click()
+        # Checking the counter icon
+        quantity = prod_page.get_counter()
+        self.check_quantity(quantity)

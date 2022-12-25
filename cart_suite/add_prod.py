@@ -1,23 +1,32 @@
 from drive import Drive
-from pages.prod_list_page import ProductListPage
-from pages.prod_page import ProductPage
-from selenium.webdriver.support import expected_conditions
+from pages.prod_list_page import ProdListPage
+from pages.prod_page import ProdPage
+import allure
+import time
 
 
-# Verifying the user's ability to add one available product item to the Cart & closure of Cart pop-up via the button
+@allure.issue('https://github.com/Test-Automation-Crash-Course-24-10-22/team_03/issues/1',
+              "Adding Available Product to the Cart")
+@allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""Verifying the user's ability to add one available product item to the Cart & closure of Cart 
+pop-up via the button""")
 class AddProduct(Drive):
-    def test_add_product(self):
-        self.driver.get(ProductListPage.page)
-        self.driver.implicitly_wait(3)
-        # Clicking on product's image to open product's page
-        av_prod_a = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.product_image))
-        av_prod_a.click()
-        # Clicking 'Купити' button
-        buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductPage.buy_button))
-        buy.click()
-        # Close via 'Продовжити покупки' button
-        con = self.wait.until(expected_conditions.element_to_be_clickable(ProductPage.continue_button))
-        con.click()
-        quantity = int(self.wait.until(expected_conditions.presence_of_element_located(ProductPage.counter_icon)).text)
-        # Checking the counter icon
+    @allure.step("Checking if the counter icon equals 1")
+    def check_quantity(self, quantity):
         self.assertEqual(quantity, 1)
+
+    def test_add_product(self):
+        prod_list_page = ProdListPage(self.driver)
+        prod_page = ProdPage(self.driver)
+        prod_list_page.open()
+        time.sleep(3)
+        # Clicking on product
+        prod_list_page.prod_click()
+        # Clicking on buy button
+        prod_page.buy_button_click()
+        # Close via continue button
+        prod_page.con_button_click()
+        # Checking the counter icon
+        quantity = prod_page.get_counter()
+        self.check_quantity(quantity)
+

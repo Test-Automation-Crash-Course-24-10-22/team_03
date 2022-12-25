@@ -1,42 +1,54 @@
 from drive import Drive
-from pages.prod_list_page import ProductListPage
+from pages.prod_list_page import ProdListPage
 from pages.cart_page import CartPage
-from selenium.webdriver.support import expected_conditions
+import allure
+import time
 
 
-# Removing Product from the Cart
+@allure.issue('https://github.com/Test-Automation-Crash-Course-24-10-22/team_03/issues/3',
+              "Removing Product from the Cart")
+@allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""Verifying the user's ability to open the Cart via the text 'Вже в кошику' in the product overview,
+        remove one product item from the cart, & inability to remove all of them by using the '-' button""")
 class RemProduct(Drive):
-    def test_rem_prod(self):
-        self.driver.get(ProductListPage.page)
-        self.driver.implicitly_wait(3)
-        # Clicking on cart button
-        buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.first_prod_cart_button))
-        buy.click()
-        buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.second_prod_cart_button))
-        buy.click()
-        # Clicking on cart icon
-        cart = self.wait.until(expected_conditions.element_to_be_clickable(ProductListPage.cart_icon))
-        cart.click()
-        # Clicking on three dots button
-        dots = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.three_dots_button))
-        dots.click()
-        # Removing product
-        rem = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.remove_option))
-        rem.click()
-        self.driver.implicitly_wait(3)
-        order_price = int(self.wait.until(expected_conditions.presence_of_element_located(CartPage.order_price)).text)
-        price = self.wait.until(expected_conditions.presence_of_element_located(CartPage.first_prod_price)).text.split(" ", 2)
-        price = int(''.join(price[:len(price) - 1]))
-        # Checking if price is correct
+    @allure.step("Checking if price is correct")
+    def check_price(self, order_price, price):
         self.assertEqual(order_price, price)
-        # Removing another product
-        dots = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.three_dots_button))
-        dots.click()
-        rem = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.remove_option))
-        rem.click()
-        header = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.empty_cart_header)).text
-        # Checking if header is correct
+
+    @allure.step("Checking if header is correct")
+    def check_header(self, header):
         self.assertEqual(header, 'Кошик порожній')
-        mes = self.wait.until(expected_conditions.element_to_be_clickable(CartPage.empty_cart_message)).text
-        # Checking if message is correct
+
+    @allure.step("Checking if message is correct")
+    def check_message(self, mes):
         self.assertEqual(mes, 'Але це ніколи не пізно виправити :)')
+
+    def test_rem_prod(self):
+        prod_list_page = ProdListPage(self.driver)
+        cart_page = CartPage(self.driver)
+        prod_list_page.open()
+        time.sleep(3)
+        # Clicking on cart button
+        prod_list_page.cart_button_click()
+        prod_list_page.cart_button_click()
+        # Clicking on cart icon
+        prod_list_page.cart_icon()
+        # Clicking on three dots button
+        cart_page.first_product_dots_click()
+        # Removing product
+        cart_page.rem_option_click()
+        time.sleep(3)
+        # Checking if price is correct
+        order_price = cart_page.get_order_price()
+        price = cart_page.get_first_product_price()
+        self.check_price(order_price, price)
+        # Removing another product
+        cart_page.first_product_dots_click()
+        cart_page.rem_option_click()
+        time.sleep(3)
+        # Checking if header is correct
+        header = cart_page.get_cart_header()
+        self.check_header(header)
+        # Checking if message is correct
+        mes = cart_page.get_cart_message()
+        self.check_message(mes)
