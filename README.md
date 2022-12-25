@@ -15,4 +15,13 @@
   <li>Create venv with the command <sub>python -m venv venv</sub> and activate it</li>
   <li>Install all the necessary packages with the command <sub>pip install -r requirements.txt</sub></li>
   <li>Run all tests with <sub>python -m unittest</sub> or particular with <sub>python -m unittest [test_suite].[test]</sub></li>
+  <li>Alternatively run all tests with <sub>pytest [test_suite]</sub> or particular with <sub>pytest [test_suite]/[test].py</sub></li>
+</ol>
+<hr>
+<h3>Allure Reports</h3>
+<ol>
+  <li>Install allure with the command <sub>pip install allure-pytest</sub></li>
+  <li>Create a directory for reports with the command <sub>pytest --alluredir [dir]</sub></li>
+  <li>Run tests to generate reports with <sub>python -m pytest [full path to file]  --alluredir [dir]</sub></li>
+  <li>View reports with <sub>allure serve [full path to dir]</sub></li>
 </ol>
