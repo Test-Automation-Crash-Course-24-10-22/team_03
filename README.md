@@ -20,7 +20,10 @@
 <hr>
 <h3>Allure Reports</h3>
 <ol>
-  <li>Install allure with the command <sub>pip install allure-pytest</sub></li>
+  <li>Install allure library with the command <sub>pip install allure-pytest</sub></li>
+  <li>Install JDK and add it to the <a href="https://www.youtube.com/watch?v=104dNWmM6Rs">Path</a></li>
+  <li>Install <a href="https://scoop.sh/">scoop</a> via PowerShell</li>
+  <li>Install Alure command line with <sub>scoop install allure</sub> command in PowerShell</li>
   <li>Create a directory for reports with the command <sub>pytest --alluredir [dir]</sub></li>
   <li>Run tests to generate reports with <sub>python -m pytest [full path to file]  --alluredir [dir]</sub></li>
   <li>View reports with <sub>allure serve [full path to dir]</sub></li>
