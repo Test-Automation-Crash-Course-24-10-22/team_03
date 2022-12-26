@@ -7,7 +7,7 @@ import allure
 class Page:
     def __init__(self, driver, page=None):
         self.driver = driver
-        self.wait = WebDriverWait(self.driver, timeout=30, ignored_exceptions=(NoSuchElementException, TimeoutException,
+        self.wait = WebDriverWait(self.driver, timeout=10, ignored_exceptions=(NoSuchElementException, TimeoutException,
                                                                                StaleElementReferenceException,
                                                                                ElementClickInterceptedException))
         self.page = page

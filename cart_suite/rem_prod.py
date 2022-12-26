@@ -17,7 +17,7 @@ class RemProduct(Drive):
 
     @allure.step("Checking if header is correct")
     def check_header(self, header):
-        self.assertEqual(header, 'Кошик порожній')
+        self.assertEqual(header, 'Кошик')
 
     @allure.step("Checking if message is correct")
     def check_message(self, mes):
@@ -30,7 +30,7 @@ class RemProduct(Drive):
         time.sleep(3)
         # Clicking on cart button
         prod_list_page.cart_button_click()
-        prod_list_page.cart_button_click()
+        prod_list_page.cart_button_click2()
         # Clicking on cart icon
         prod_list_page.cart_icon()
         # Clicking on three dots button
@@ -45,7 +45,6 @@ class RemProduct(Drive):
         # Removing another product
         cart_page.first_product_dots_click()
         cart_page.rem_option_click()
-        time.sleep(3)
         # Checking if header is correct
         header = cart_page.get_cart_header()
         self.check_header(header)

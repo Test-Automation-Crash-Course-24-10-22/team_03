@@ -14,9 +14,14 @@ class ProdListPage(Page):
         av_prod_a = self.wait.until(expected_conditions.element_to_be_clickable(ProductListLocators.product_image))
         self.driver.execute_script("arguments[0].click();", av_prod_a)
 
-    @allure.step("Clicking on cart button")
+    @allure.step("Clicking on cart button of the first product")
     def cart_button_click(self):
         buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductListLocators.first_prod_cart_button))
+        self.driver.execute_script("arguments[0].click();", buy)
+
+    @allure.step("Clicking on cart button of the second product")
+    def cart_button_click2(self):
+        buy = self.wait.until(expected_conditions.element_to_be_clickable(ProductListLocators.second_prod_cart_button))
         self.driver.execute_script("arguments[0].click();", buy)
 
     @allure.step("Clicking on pop-up message")
